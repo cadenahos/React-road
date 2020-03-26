@@ -3,7 +3,7 @@ import './App.css';
 
 class App extends Component {
   render() {
-      const helloWord = 'Welcome to the Road to Learn React';
+      const helloWord = 'Hello new';
 
     return(
       <div className="App">
