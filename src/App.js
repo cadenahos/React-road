@@ -5,7 +5,7 @@ const list = [
   {
     title: 'React',
     url: 'https://facebook.github.io/react/',
-    author: 'Jordan Walke',
+    author: ' Jordan Walke ',
     num_comments: 3,
     points: 4,
     objectID: 0,
@@ -13,12 +13,24 @@ const list = [
   {
     title: 'Redux',
     url: 'https://github.com/reactjs/redux',
-    author: 'Dan Abramov, Andrew Clark',
+    author: ' Dan Abramov, Andrew Clark ',
     num_comments: 2,
     points: 5,
     objectID: 1,
   },
 ];
+
+const largeColum ={
+  width: '40%'
+};
+
+const middColum ={
+  width: '30%'
+};
+const smallColum ={
+  width: '10%'
+};
+
 function isSearched(searchTerm){
   return function(item){
     return item.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -52,11 +64,15 @@ class App extends Component {
   render() {
     const {searchTerm, list} = this.state;
     return(
-       <div className="App">
+       <div className="page">
+       <div className="interactions">
        <Search
         value={searchTerm}
         onChange={this.onSearchChange}
-       />
+       >
+       Search
+       </Search>
+       </div>
        <Table
           list={list}
           pattern={searchTerm}
@@ -66,49 +82,44 @@ class App extends Component {
      );
    }
  }
+ const Button = ({onClick, className = ' ', children}) =>
+       <button
+       onClick={onClick}
+       className={className}
+       type= "button"
+       >
+       {children}
+       </button>
 
- class Search extends Component{
-   render() {
-     const {value, onChange} = this.props;
-     return (
+     const Search = ({value, onChange, children}) =>
        <form>
-        <input
+       {children} <input
           type="text"
           value={value}
           onChange={onChange}
         />
        </form>
-     );
-   }
- }
- class Table extends Component {
-   render() {
-     const {list, pattern, onDismiss} = this.props;
-     return (
-       <div>
+
+     const Table =({list, pattern, onDismiss}) =>
+       <div className="table">
         {list.filter(isSearched(pattern)).map(item =>
-            <div key={item.objectID}>
-              <span>
+            <div key={item.objectID} className="table-row">
+              <span style= {largeColum}>
                 <a href={item.url}>{item.title}</a>
               </span>
-              <span>{item.author}</span>
-              <span>{item.num_comments}</span>
-              <span>{item.points}</span>
-              <span>
-                <button
-                  onClick={() => onDismiss(item.objectID)}
-                  type="button"
+              <span style= {middColum}>{item.author}</span>
+              <span style= {smallColum}>{item.num_comments}</span>
+              <span style= {smallColum}>{item.points}</span>
+              <span style= {smallColum}>
+                <Button onClick={() => onDismiss(item.objectID)}
+                className="button-inline"
                 >
                 Dismiss
-                </button>
+                </Button>
               </span>
             </div>
         )}
-
        </div>
-     );
-   }
- }
 
 
 
