@@ -1,54 +1,57 @@
 import React, { Component }from 'react';
 import './App.css';
 
-const list = [
-  {
-    title: 'React',
-    url: 'https://facebook.github.io/react/',
-    author: ' Jordan Walke ',
-    num_comments: 3,
-    points: 4,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://github.com/reactjs/redux',
-    author: ' Dan Abramov, Andrew Clark ',
-    num_comments: 2,
-    points: 5,
-    objectID: 1,
-  },
-];
-
-const largeColum ={
-  width: '40%'
+const largeColum = {
+  width: '40%',
 };
 
-const middColum ={
-  width: '30%'
+const middColum = {
+  width: '30%',
 };
-const smallColum ={
-  width: '10%'
+const smallColum = {
+  width: '10%',
 };
 
-function isSearched(searchTerm){
-  return function(item){
+const DEFAULT_QUERY = 'redux';
+
+const PATH_BASE = 'http://hn.algolia.com/api/v1';
+const PATH_SEARCH = '/search';
+const PARAM_SEARCH = 'query=';
+
+function isSearched(searchTerm) {
+  return function (item) {
     return item.title.toLowerCase().includes(searchTerm.toLowerCase());
-  }
+  };
 }
+
 class App extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
 
-      this.state = {
-        list,
-        searchTerm: '',
+    this.state = {
+        result: null,
+        searchTerm: DEFAULT_QUERY,
       };
-      this.onSearchChange = this.onSearchChange.bind(this);
-      this.onDismiss = this.onDismiss.bind(this);
 
-    }
+    this.setSearchTopStories = this.setSearchTopStories.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
+    this.onDismiss = this.onDismiss.bind(this);
+
+  }
+
+  setSearchTopStories(result) {
+    this.setState({ result });
+  }
+
+  componentDidMount() {
+    const { searchTerm } = this.state;
+
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+    .then(response => response.json())
+    .then(result => this.setSearchTopStories(result))
+    .catch(error => error);
+  }
 
   onSearchChange(event){
     this.setState({searchTerm: event.target.value});
@@ -62,8 +65,11 @@ class App extends Component {
 
 
   render() {
-    const {searchTerm, list} = this.state;
-    return(
+    const { searchTerm, result } = this.state;
+
+    if (!result) { return null; }
+
+    return (
        <div className="page">
        <div className="interactions">
        <Search
@@ -74,7 +80,7 @@ class App extends Component {
        </Search>
        </div>
        <Table
-          list={list}
+          list={result.hits}
           pattern={searchTerm}
           onDismiss={this.onDismiss}
        />
